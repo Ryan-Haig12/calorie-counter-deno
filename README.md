@@ -7,7 +7,7 @@ Deno is a brand new TypeScript runtime environment that I have been eager to pla
 You will not be able to run this out of the box. In order to run this app you'll need to complete 2 steps
 
 ## Step 1
-Create your own PostgreSQL database, I used `https://www.elephantsql.com/`. Create a file in the root directory called `db` and add a single file to it called `config.ts`
+Create your own PostgreSQL database, I used `https://www.elephantsql.com/`. Create a folder in the root directory called `db` and add a single file in it called `config.ts`
 
 ```Typescript
 import Dexecutor from "https://deno.land/x/dexecutor/mod.ts"

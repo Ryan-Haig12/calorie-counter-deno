@@ -19,7 +19,7 @@ const createExerciseLog = async ({ response, request }: { response: any, request
     let user = await db.execute(`select * from users where id = '${ data.value.userId }'`)
     user = queryResParser({ data: user })
     if(!user.length) {
-        response.status = 400
+        response.status = 404
         response.body = {
             error: `User ${ data.value.userId } not found`
         }
@@ -34,7 +34,6 @@ const createExerciseLog = async ({ response, request }: { response: any, request
     // if exerciseLog is not returned, throw an error
     let newLog = await db.execute(`select * from exerciselog where userId = '${ data.value.userId }' and activity = '${ data.value.activity }' and calories_burnt = ${ data.value.calories_burnt }`)
     newLog = queryResParser({ data: newLog })
-
     if(!newLog.length) {
         response.status = 500
         response.body = {
@@ -47,7 +46,7 @@ const createExerciseLog = async ({ response, request }: { response: any, request
     response.body = newLog[0]
 }
 
-// @desc Create a new exercise log and place it in postgres
+// @desc Get all exorciseLogs from database for a single user
 // @route GET /api/v1/exercise/:userId
 const getExerciseLog = async ({ response, params }: { response: any, params: any }) => {
     let log = await db.execute(`select * from exerciselog where userid = '${ params.userId }' `)
@@ -57,7 +56,7 @@ const getExerciseLog = async ({ response, params }: { response: any, params: any
     if(!log.length) {
         response.status = 404
         response.body = {
-            error: `No Logs found for UserId ${ params.userId }`
+            error: `No Exercise Logs found for UserId ${ params.userId }`
         }
         return
     }
@@ -109,15 +108,16 @@ const updateExerciseLog = async ({ response, request, params }: { response: any,
     if(!updatedLog.length) {
         response.status = 500
         response.body = {
-            error: 'error creating new user... I hope you never see this error message'
+            error: 'error updating exercise log... I hope you never see this error message'
         }
         return
     }
 
+    response.status = 200
     response.body = updatedLog[0]
 }
 
-// @desc Delete an exercise log
+// @desc Delete an single exercise log by logId
 // @route DELETE /api/v1/exercise/delete/:logId
 const deleteExerciseLog = async ({ response, params }: { response: any, params: any }) => {
     let log = await db.execute(`select * from exerciselog where logid = '${ params.logId }' `)
@@ -127,13 +127,12 @@ const deleteExerciseLog = async ({ response, params }: { response: any, params: 
     if(!log.length) {
         response.status = 404
         response.body = {
-            error: `Log ${ params.logId } not found`
+            error: `Exercise Log ${ params.logId } not found`
         }
         return
     }
 
-    // ensuring that the user truly wants to delete their account will be handled client side
-    // delete the user
+    // delete the log
     await db.execute(`delete from exerciselog where logId = '${ params.logId }'`)
 
     response.status = 204
