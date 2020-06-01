@@ -1,9 +1,12 @@
 import { Router } from 'https://deno.land/x/oak/mod.ts'
+import * as authController from './controllers/auth.ts'
 import * as userController from './controllers/user.ts'
 
 const router = new Router()
 
 router
+    .post('/api/v1/auth', authController.login)
+
     .get('/api/v1/users/id/:id', userController.getUserById)
     .get('/api/v1/users/username/:username', userController.getUserByName)
     .get('/api/v1/users/allData/:id', userController.getAllUserDataById)

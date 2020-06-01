@@ -53,6 +53,15 @@ const createUser = async ({ request, response }: { request: any, response: any }
         return
     }
 
+    // if the email is not a valid email, return an error
+    const re: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const isEmail = re.test(data.value.email)
+    if(!isEmail) {
+        response.status = 400
+        response.body = { error: `Email ${ data.value.email } is invalid` }
+        return
+    }
+
     // if username or email exist, return an error
     let userExists = await db.execute(`select * from users where email = '${ data.value.email }' or username = '${ data.value.username }'`)
     userExists = queryResParser({ data: userExists })
