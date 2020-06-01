@@ -1,11 +1,17 @@
 import { Router } from 'https://deno.land/x/oak/mod.ts'
 import * as authController from './controllers/auth.ts'
+import * as exerciseController from './controllers/exerciselog.ts'
 import * as userController from './controllers/user.ts'
 
 const router = new Router()
 
 router
     .post('/api/v1/auth', authController.login)
+
+    .post('/api/v1/exercise/createLog', exerciseController.createExerciseLog)
+    .get('/api/v1/exercise/:userId', exerciseController.getExerciseLog)
+    .put('/api/v1/exercise/update/:logId', exerciseController.updateExerciseLog)
+    .delete('/api/v1/exercise/delete/:logId', exerciseController.deleteExerciseLog)
 
     .get('/api/v1/users/id/:id', userController.getUserById)
     .get('/api/v1/users/username/:username', userController.getUserByName)

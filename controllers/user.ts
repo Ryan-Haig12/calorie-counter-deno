@@ -159,7 +159,7 @@ const updateUser = async ({ request, response, params }: { request: any, respons
     // update the user
     await db.execute(query)
 
-    // if the new user was not created, return an error
+    // if the new user was not updated, return an error
     let newUser = await db.execute(`select * from users where id = '${ params.id }'`)
     newUser = queryResParser({ data: newUser })
     if(!newUser.length) {
