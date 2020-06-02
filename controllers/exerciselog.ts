@@ -182,4 +182,22 @@ const getAllByTime = async ({ response, request }: { response: any, request: any
     }
 }
 
-export { createExerciseLog, getExerciseLog, getExerciseLogById, updateExerciseLog, deleteExerciseLog, getAllByTime }
+// @desc Get all exerciseLogs by activity
+// @route GET /api/v1/exercise/activity/:activityName
+const getByActivityName = async ({ response, params }: { response: any, params: { activityName: string } }) => {
+    let logs = await db.execute(`select * from exerciselog where activity ilike '%${ params.activityName.toLowerCase() }%' `)
+    logs = queryResParser({ data: logs })
+
+    // if there's no log, return an error
+    if(!logs.length) {
+        response.status = 404
+        response.body = {
+            error: `No Exercise Logs found for activity ${ params.activityName }`
+        }
+        return
+    }
+
+    response.body = logs
+}
+
+export { createExerciseLog, getExerciseLog, getExerciseLogById, updateExerciseLog, deleteExerciseLog, getAllByTime, getByActivityName }

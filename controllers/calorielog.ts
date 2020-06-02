@@ -180,4 +180,22 @@ const getAllByTime = async ({ response, request }: { response: any, request: any
     }
 }
 
-export { createCalorieLog, getCalorieLog, getCalorieLogById, updateCalorieLog, deleteCalorieLog, getAllByTime }
+// @desc Get all calorieLogs by food
+// @route GET /api/v1/calorie/food/:foodName
+const getByFoodName = async ({ response, params }: { response: any, params: { foodName: string } }) => {
+    let logs = await db.execute(`select * from calorielog where food ilike '%${ params.foodName.toLowerCase() }%' `)
+    logs = queryResParser({ data: logs })
+
+    // if there's no log, return an error
+    if(!logs.length) {
+        response.status = 404
+        response.body = {
+            error: `No Calorie Logs found for food ${ params.foodName }`
+        }
+        return
+    }
+
+    response.body = logs
+}
+
+export { createCalorieLog, getCalorieLog, getCalorieLogById, updateCalorieLog, deleteCalorieLog, getAllByTime, getByFoodName }

@@ -1,16 +1,13 @@
 import { Application } from 'https://deno.land/x/oak/mod.ts'
 
-import router from './routes.ts'
 import db from './db/config.ts'
+import router from './routes.ts'
+import querySanitizer from './utils/querySanitizer.ts'
 
 const app = new Application()
 await db.connect()
 
-// app.use(async ({ request }: { request: any }, next) => {
-//     console.log(request)
-//     await next()
-// })
-
+app.use(querySanitizer)
 app.use(router.routes())
 app.use(router.allowedMethods())
 
