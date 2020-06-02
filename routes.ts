@@ -13,11 +13,13 @@ router
     .get('/api/v1/calorie/:userId', calorieController.getCalorieLog)
     .put('/api/v1/calorie/update/:logId', calorieController.updateCalorieLog)
     .delete('/api/v1/calorie/delete/:logId', calorieController.deleteCalorieLog)
+    .post('/api/v1/calorie/getAllByTime', calorieController.getAllByTime)
 
     .post('/api/v1/exercise/createLog', exerciseController.createExerciseLog)
     .get('/api/v1/exercise/:userId', exerciseController.getExerciseLog)
     .put('/api/v1/exercise/update/:logId', exerciseController.updateExerciseLog)
     .delete('/api/v1/exercise/delete/:logId', exerciseController.deleteExerciseLog)
+    .post('/api/v1/exercise/getAllByTime', exerciseController.getAllByTime)
 
     .get('/api/v1/users/id/:id', userController.getUserById)
     .get('/api/v1/users/username/:username', userController.getUserByName)

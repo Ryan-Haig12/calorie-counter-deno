@@ -70,8 +70,6 @@ const updateCalorieLog = async ({ response, params, request }: { response: any, 
     let log = await db.execute(`select * from calorielog where logid = '${ params.logId }' `)
     log = queryResParser({ data: log })
 
-    console.log(log)
-
     // if log is not found, return error
     if(!log.length) {
         response.status = 404
@@ -138,4 +136,30 @@ const deleteCalorieLog = async ({ response, params }: { response: any, params: {
     response.status = 204
 }
 
-export { createCalorieLog, getCalorieLog, updateCalorieLog, deleteCalorieLog }
+// @desc Get all calorieLogs in a specific timeframe.
+// I wanted this to be a GET, but oak will not let me make GET routes without query params
+// @route POST /api/v1/calorie/getAllByTime
+const getAllByTime = async ({ response, request }: { response: any, request: any }) => {
+    const data = await request.body()
+
+    // if no body or not every variable provided, return error
+    if(!data.value || !data.value.begin || !data.value.end) {
+        response.status = 400
+        response.body = {
+            error: 'begin and end required'
+        }
+        return
+    }
+
+    // get all logs in the allocated time
+    let logs = await db.execute(`select * from calorieLog where logged_at < '${ data.value.end }' and logged_at > '${ data.value.begin }'`)
+    logs = queryResParser({ data: logs })
+
+    response.status = 200
+    response.body = {
+        records: logs.length,
+        data: logs
+    }
+}
+
+export { createCalorieLog, getCalorieLog, updateCalorieLog, deleteCalorieLog, getAllByTime }

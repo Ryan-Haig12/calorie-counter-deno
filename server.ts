@@ -6,6 +6,11 @@ import db from './db/config.ts'
 const app = new Application()
 await db.connect()
 
+// app.use(async ({ request }: { request: any }, next) => {
+//     console.log(request)
+//     await next()
+// })
+
 app.use(router.routes())
 app.use(router.allowedMethods())
 
