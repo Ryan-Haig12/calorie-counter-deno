@@ -64,6 +64,24 @@ const getExerciseLog = async ({ response, params }: { response: any, params: any
     response.body = log
 }
 
+// @desc Get a single exerciseLog by logId
+// @route GET /api/v1/exercise/log/:logId
+const getExerciseLogById = async ({ response, request, params }: { response: any, request: any, params: { logId: string } }) => {
+    let log = await db.execute(`select * from exerciselog where logId = '${ params.logId }' `)
+    log = queryResParser({ data: log })
+
+    // if there's no log, return an error
+    if(!log.length) {
+        response.status = 404
+        response.body = {
+            error: `No Exercise Logs found for LogId ${ params.logId }`
+        }
+        return
+    }
+
+    response.body = log[0]
+}
+
 // @desc Update an exercise log
 // @route PUT /api/v1/exercise/update/:logId
 const updateExerciseLog = async ({ response, request, params }: { response: any, request: any, params: any }) => {
@@ -164,4 +182,4 @@ const getAllByTime = async ({ response, request }: { response: any, request: any
     }
 }
 
-export { createExerciseLog, getExerciseLog, updateExerciseLog, deleteExerciseLog, getAllByTime }
+export { createExerciseLog, getExerciseLog, getExerciseLogById, updateExerciseLog, deleteExerciseLog, getAllByTime }

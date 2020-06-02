@@ -47,7 +47,7 @@ const createCalorieLog = async ({ response, request }: { response: any, request:
 }
 
 // @desc Get all calorieLogs from database for a single user
-// @route GET /api/v1/calorie/:logId
+// @route GET /api/v1/calorie/user/:userId
 const getCalorieLog = async ({ response, params }: { response: any, params: { userId: string } }) => {
     let log = await db.execute(`select * from calorielog where userid = '${ params.userId }' `)
     log = queryResParser({ data: log })
@@ -62,6 +62,24 @@ const getCalorieLog = async ({ response, params }: { response: any, params: { us
     }
 
     response.body = log
+}
+
+// @desc Get a single calorieLog by logId
+// @route GET /api/v1/calorie/log/:logId
+const getCalorieLogById = async ({ response, request, params }: { response: any, request: any, params: { logId: string } }) => {
+    let log = await db.execute(`select * from calorielog where logId = '${ params.logId }' `)
+    log = queryResParser({ data: log })
+
+    // if there's no log, return an error
+    if(!log.length) {
+        response.status = 404
+        response.body = {
+            error: `No Calorie Logs found for LogId ${ params.logId }`
+        }
+        return
+    }
+
+    response.body = log[0]
 }
 
 // @desc Update a calorieLog by logId
@@ -162,4 +180,4 @@ const getAllByTime = async ({ response, request }: { response: any, request: any
     }
 }
 
-export { createCalorieLog, getCalorieLog, updateCalorieLog, deleteCalorieLog, getAllByTime }
+export { createCalorieLog, getCalorieLog, getCalorieLogById, updateCalorieLog, deleteCalorieLog, getAllByTime }
