@@ -2,7 +2,7 @@ const querySanitizer = async ({ request, response }: { request: any, response: a
     const data = await request.body()
 
     // ensure that the request body is only alphanumberical, spaces, underscore, or a single dash
-    const alphanumberical: RegExp = /^[a-zA-Z0-9_ -]*$/
+    const alphanumberical: RegExp = /^[a-zA-Z0-9_ -.@]*$/
     const twoDashesInRow: RegExp = /^(-\1{2})/ // i wish i understood regex better enough to combine these 2 expressions...
     let flag = true
     let error = ''

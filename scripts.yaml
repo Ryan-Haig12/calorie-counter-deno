@@ -1,2 +1,3 @@
 scripts:
   server: denon run --allow-net --unstable server.ts
+  test: deno test --allow-net test/*.test.ts

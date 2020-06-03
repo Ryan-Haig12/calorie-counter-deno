@@ -16,8 +16,8 @@ const login = async ({ response, request }: { response: any, request: any }) => 
     }
 
     // if the email is not a valid email, return an error
-    const re: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const isEmail = re.test(data.value.email)
+    const validEmail: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const isEmail = validEmail.test(data.value.email)
     if(!isEmail) {
         response.status = 400
         response.body = { error: `Email ${ data.value.email } is invalid` }
@@ -45,6 +45,9 @@ const login = async ({ response, request }: { response: any, request: any }) => 
         response.body = { error: `Email/password are not correct` }
         return
     }
+
+    // don't return the password
+    user.password = undefined
 
     response.status = 200
     response.body = user

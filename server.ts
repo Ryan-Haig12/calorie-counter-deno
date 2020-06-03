@@ -5,7 +5,7 @@ import router from './routes.ts'
 import querySanitizer from './utils/querySanitizer.ts'
 
 const app = new Application()
-await db.connect()
+await db.connect() // <- this is the error
 
 app.use(querySanitizer)
 app.use(router.routes())
