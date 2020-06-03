@@ -1,1 +1,1 @@
-web: deno run --allow-net=:${PORT} --cached-only --unstable server.ts --port=${PORT}
+web: deno run --allow-net=:${PORT} --unstable server.ts --port=${PORT}
