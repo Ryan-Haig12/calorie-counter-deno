@@ -1,4 +1,5 @@
 import { assertEquals } from 'https://deno.land/std/testing/asserts.ts'
+import { validUUID, validEmail } from '../utils/regex.ts'
 
 const url = `http://localhost:4000/api/v1/auth`
 const route = `POST /api/v1/auth`
@@ -87,9 +88,6 @@ Deno.test(`${ route } should successfully auth user`, async () => {
 		headers: { 'content-type': 'application/json' }
     })
     const data = await res.json()
-
-    const validUUID: RegExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    const validEmail: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     assertEquals(validUUID.test(data.id), true)
     assertEquals(data.username, 'HaigRyan')

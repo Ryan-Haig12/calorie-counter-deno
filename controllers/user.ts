@@ -1,14 +1,32 @@
-import db from '../db/config.ts'
-import queryResParser from '../utils/queryResParser.ts'
 import * as bcrypt from 'https://deno.land/x/bcrypt/mod.ts'
 
+import db from '../db/config.ts'
+import queryResParser from '../utils/queryResParser.ts'
+import { validUUID } from '../utils/regex.ts'
+
 // @desc Get user from db by userId
-// @route GET /api/v1/users/:id
-const getUserById = async ({ response, params }: { response: any, params: { id: string } }) => {
-    const data = await db.execute(`select * from users where id = '${ params.id }' `)
+// @route GET /api/v1/users/id/:userId
+const getUserById = async ({ response, params }: { response: any, params: { userId: string } }) => {
+
+    // if userId is not a valid uuid, throw an error
+    if(!validUUID.test(params.userId)) {
+        response.status = 400
+        response.body = { error: `userId ${ params.userId } is not a valid UUID` }
+        return
+    }
+
+    const data = await db.execute(`select * from users where id = '${ params.userId }' `)
     const d = queryResParser({ data })
 
-    response.body = d
+    // if no user was found, return a 404 error
+    if(!d.length) {
+        response.status = 404
+        response.body = { error: `userId ${ params.userId } was not found` }
+        return
+    }
+
+    d[0].password = undefined
+    response.body = d[0]
 }
 
 // @desc Get user from db by ussername

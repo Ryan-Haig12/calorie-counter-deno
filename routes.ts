@@ -25,7 +25,7 @@ router
     .post('/api/v1/exercise/getAllByTime', exerciseController.getAllByTime)
     .get('/api/v1/exercise/activity/:activityName', exerciseController.getByActivityName)
 
-    .get('/api/v1/users/id/:id', userController.getUserById)
+    .get('/api/v1/users/id/:userId', userController.getUserById)
     .get('/api/v1/users/username/:username', userController.getUserByName)
     .get('/api/v1/users/allData/:id', userController.getAllUserDataById)
     .post('/api/v1/users/create', userController.createUser)
