@@ -200,4 +200,18 @@ const getByActivityName = async ({ response, params }: { response: any, params: 
     response.body = logs
 }
 
-export { createExerciseLog, getExerciseLog, getExerciseLogById, updateExerciseLog, deleteExerciseLog, getAllByTime, getByActivityName }
+// @desc Get all exerciseLogs that fall in the given calorie range
+// @route GET /api/v1/exercise/calorierange/:begin/:end
+const getLogsInCalorieRange = async ({ response, params }: { response: any, params: { begin: string, end: string } }) => {
+    // get all logs in the allocated time
+    let logs = await db.execute(`select * from exerciseLog where calories_burnt <= ${ params.end } and calories_burnt >= ${ params.begin }`)
+    logs = queryResParser({ data: logs })
+
+    response.status = 200
+    response.body = {
+        records: logs.length,
+        data: logs
+    }
+}
+
+export { createExerciseLog, getExerciseLog, getExerciseLogById, updateExerciseLog, deleteExerciseLog, getAllByTime, getByActivityName, getLogsInCalorieRange }

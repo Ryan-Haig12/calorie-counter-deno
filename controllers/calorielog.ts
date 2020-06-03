@@ -1,5 +1,6 @@
 import db from '../db/config.ts'
 import queryResParser from '../utils/queryResParser.ts'
+import { validDate } from '../utils/regex.ts'
 
 // @desc Create a new calorie log
 // @route POST /api/v1/calorie/createLog
@@ -155,22 +156,22 @@ const deleteCalorieLog = async ({ response, params }: { response: any, params: {
 }
 
 // @desc Get all calorieLogs in a specific timeframe.
-// I wanted this to be a GET, but oak will not let me make GET routes without query params
-// @route POST /api/v1/calorie/getAllByTime
-const getAllByTime = async ({ response, request }: { response: any, request: any }) => {
-    const data = await request.body()
-
-    // if no body or not every variable provided, return error
-    if(!data.value || !data.value.begin || !data.value.end) {
+// @route POST /api/v1/calorie/daterange/:begin/:end
+const getAllByTime = async ({ response, request, params }: { response: any, request: any, params: { begin: string, end: string } }) => {
+    if(!validDate.test(params.begin)) {
         response.status = 400
-        response.body = {
-            error: 'begin and end required'
-        }
+        response.body = { error: `${ params.begin } is not a valid date` }
+        return
+    }
+
+    if(!validDate.test(params.end)) {
+        response.status = 400
+        response.body = { error: `${ params.end } is not a valid date` }
         return
     }
 
     // get all logs in the allocated time
-    let logs = await db.execute(`select * from calorieLog where logged_at < '${ data.value.end }' and logged_at > '${ data.value.begin }'`)
+    let logs = await db.execute(`select * from calorieLog where logged_at < '${ params.end }' and logged_at > '${ params.begin }'`)
     logs = queryResParser({ data: logs })
 
     response.status = 200
@@ -198,4 +199,18 @@ const getByFoodName = async ({ response, params }: { response: any, params: { fo
     response.body = logs
 }
 
-export { createCalorieLog, getCalorieLog, getCalorieLogById, updateCalorieLog, deleteCalorieLog, getAllByTime, getByFoodName }
+// @desc Get all calorieLogs that fall in the given calorie range
+// @route GET /api/v1/calorie/calorierange/:begin/:end
+const getLogsInCalorieRange = async ({ response, params }: { response: any, params: { begin: string, end: string } }) => {
+    // get all logs in the allocated time
+    let logs = await db.execute(`select * from calorieLog where calories <= ${ params.end } and calories >= ${ params.begin }`)
+    logs = queryResParser({ data: logs })
+
+    response.status = 200
+    response.body = {
+        records: logs.length,
+        data: logs
+    }
+}
+
+export { createCalorieLog, getCalorieLog, getCalorieLogById, updateCalorieLog, deleteCalorieLog, getAllByTime, getByFoodName, getLogsInCalorieRange }
